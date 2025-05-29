@@ -28,4 +28,10 @@ public class ProductController {
                                                        @RequestParam(defaultValue = "asc") String sortDirection){
         return ResponseEntity.ok(productService.fetchListProducts(page, size, sortDirection));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Product>>searchProducts(@RequestParam String name){
+        List<Product>result=productService.fuzzySearchProducts(name);
+        return ResponseEntity.ok(result);
+    }
 }

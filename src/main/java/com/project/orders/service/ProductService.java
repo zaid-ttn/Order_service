@@ -1,5 +1,7 @@
 package com.project.orders.service;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import com.project.orders.model.Product;
 import com.project.orders.repository.ProductRepository;
 import org.slf4j.Logger;
@@ -10,10 +12,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
+
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -22,6 +27,9 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private ElasticsearchOperations elasticsearchOperations;
 
     @RabbitListener(queues = "product.upsert.queue")
     public void upsertProduct(Product product) {
@@ -64,4 +72,11 @@ public class ProductService {
         return productPage.getContent();
 
     }
+    public List<Product> fuzzySearchProducts(String name) {
+        return productRepository.searchByName(name)
+                .stream()
+                .map(searchhit->searchhit.getContent())
+                .collect(Collectors.toList());
+    }
+
 }
