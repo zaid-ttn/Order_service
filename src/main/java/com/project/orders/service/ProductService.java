@@ -62,18 +62,6 @@ public class ProductService {
 
         Page<Product> productPage = productRepository.findAll(pageable);
         return productPage.getContent();
-//        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-//        Page<Product> products = productRepository.findAll(pageable);
-//        List<Product> productList = new ArrayList<>();
-//        for (Product product : products.getContent()) {
-//            Product addProduct = new Product();
-//            addProduct.setId(product.getId());
-//            addProduct.setName(product.getName());
-//            addProduct.setPrice(product.getPrice());
-//            addProduct.setQuantity(product.getQuantity());
-//            addProduct.setImageUrl(product.getImageUrl());
-//        }
-//        logger.info("fetch list Products done");
-//        return productList;
+
     }
 }
