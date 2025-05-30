@@ -1,7 +1,8 @@
 package com.project.orders.service;
 
-import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.project.orders.model.Product;
 import com.project.orders.repository.ProductRepository;
 import org.slf4j.Logger;
@@ -12,10 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
-
-
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +28,7 @@ public class ProductService {
     private ProductRepository productRepository;
 
     @Autowired
-    private ElasticsearchOperations elasticsearchOperations;
+    private ElasticsearchClient elasticsearchClient;
 
     @RabbitListener(queues = "product.upsert.queue")
     public void upsertProduct(Product product) {
@@ -79,4 +78,28 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    public List<Product> fuzzySearch(String name) throws IOException {
+        SearchResponse<Product> response = elasticsearchClient.search(s -> s
+                        .index("product")
+                        .query(q -> q
+                                .match(m -> m
+                                        .field("name")
+                                        .query(name)
+                                        .fuzziness("AUTO")
+                                )
+                        ),
+                Product.class
+        );
+
+        System.out.println("Total hits: " + response.hits().total().value());
+        List<Product> resultList = new ArrayList<>();
+        List<Hit<Product>> hits = response.hits().hits();
+
+        for (Hit<Product> hit : hits) {
+            Product document = hit.source();
+            resultList.add(document);
+        }
+
+        return resultList;
+    }
 }

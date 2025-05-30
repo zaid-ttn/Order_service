@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -33,5 +34,9 @@ public class ProductController {
     public ResponseEntity<List<Product>>searchProducts(@RequestParam String name){
         List<Product>result=productService.fuzzySearchProducts(name);
         return ResponseEntity.ok(result);
+    }
+    @GetMapping("/search/inbuilt")
+    public List<Product> fuzzySearchProducts(@RequestParam String name) throws IOException {
+        return productService.fuzzySearch(name);
     }
 }
