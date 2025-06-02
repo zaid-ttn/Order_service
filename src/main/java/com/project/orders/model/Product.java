@@ -14,7 +14,6 @@ import org.springframework.data.elasticsearch.annotations.Document;
 @Getter
 @Setter
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Product {
     @Id
     private Long id;

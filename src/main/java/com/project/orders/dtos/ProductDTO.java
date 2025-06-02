@@ -1,5 +1,6 @@
 package com.project.orders.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 @NoArgsConstructor

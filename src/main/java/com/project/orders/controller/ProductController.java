@@ -35,8 +35,8 @@ public class ProductController {
         List<Product>result=productService.fuzzySearchProducts(name);
         return ResponseEntity.ok(result);
     }
-    @GetMapping("/search/inbuilt")
-    public List<Product> fuzzySearchProducts(@RequestParam String name) throws IOException {
-        return productService.fuzzySearch(name);
-    }
+//    @GetMapping("/search/inbuilt")
+//    public List<Product> fuzzySearchProducts(@RequestParam String name) throws IOException {
+//        return productService.fuzzySearch(name);
+//    }
 }
